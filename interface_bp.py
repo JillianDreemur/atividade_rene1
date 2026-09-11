@@ -115,6 +115,18 @@ def ver_aprendizado():
     return jsonify(aprendizado)
 
 
+@inter_bp.route("/simulacao", methods=["GET", "POST"])
+def alternar_simulacao():
+    estado_quarto["modo_simulacao"] = 0 if estado_quarto.get("modo_simulacao") else 1
+    salvar_estado()
+    ligado = bool(estado_quarto["modo_simulacao"])
+    return jsonify({
+        "status": "ok",
+        "modo_simulacao": ligado,
+        "mensagem": "Simulação ligada: comandos não falam com as ESPs." if ligado else "Simulação desligada: comandos vão para os IPs reais.",
+    })
+
+
 @inter_bp.route("/modo/<nome>", methods=["GET", "POST"])
 def trocar_modo(nome):
     if nome not in ("reativo", "cognitivo", "adaptativo"):

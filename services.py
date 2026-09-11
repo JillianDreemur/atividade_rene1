@@ -118,7 +118,7 @@ def estado_publico():
     return {
         **estado_quarto,
         "placas": placas_registradas,
-        "hora_servidor": datetime.now().strftime("%H:%M"),
+        "hora_servidor": datetime.now().strftime("%H:%M:%S"),
     }
 
 

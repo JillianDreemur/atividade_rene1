@@ -99,5 +99,7 @@ def recebe_dados():
 
 
 if __name__ == "__main__":
+    import simulador
+    simulador.iniciar(app)
     print(f"Servidor do quarto em http://127.0.0.1:{porta_local}")
     app.run(host=ip_local, port=porta_local, debug=True)
