@@ -1,0 +1,19 @@
+PEAS do quarto:
+P (Performance): Maximizar o conforto térmico,a iluminação e a segurança, minimizar o consumo de energia (ex. não deixar o ar ligado com a janela aberta), e garantir segurança (não molhar o quarto se chover ou deixar entrar bandido).
+E (Ambiente): O quarto (parcialmente observável, dinâmico, contínuo).
+A (Atuadores): O motor da janela, e os relés do ar-condicionado, ventilador, umidificador e lâmpada.
+S (Sensores): Sensor de chuva, luminosidade, temperatura, umidade (DHT), presença interna no quarto (PIR) e presença fora do quarto (motor 180 graus + sensor AJ-SR04M).
+
+-----------Atividade:
+Com base no reativo simples que está pronto, tente fazer o cognitivo e o adaptativo.
+1(Reativo Simples): O código acima. Choveu = fecha a janela. Faz calor = liga o ar.
+
+2(Cognitivo / Baseado em Objetivo e Utilidade): O agente começa a fazer "contas". Objetivo: Temperatura em 24ºC. Ele percebe que a temperatura está 29ºC. Ele tem duas opções para resfriar: Ligar o ar (gasto alto de energia) ou abrir a janela e ligar o ventilador (gasto baixo). A Função de Utilidade vai escolher abrir a janela, pois atinge o objetivo maximizando a performance (economia).
+
+3(Adaptativo / Aprendizagem): Precisa de uma interface de aprendizagem, o sistema gera ações e a avaliação vem do feedback do user (eu).
+
+IMagine este cenário: O agente decide abrir a janela todo dia às 6h da manhã porque a luminosidade aumenta. Mas você prefere dormir até as 7h e, irritado, manda o sistema fechar a janela pela interface web.
+
+O Aprendizado: O agente recebe uma penalidade (reforço negativo). O Elemento de Aprendizagem altera os pesos internos que esta ação foi negativa.
+
+Resultado: Após alguns dias, o agente "aprende" o seu padrão e só abre a janela depois das 7h, ou cruza a informação da luminosidade com o sensor de presença.
