@@ -1,0 +1,110 @@
+:root {
+  --bg: #0f1419;
+  --panel: #1a222c;
+  --line: #2a3644;
+  --text: #e8eef4;
+  --muted: #8ea0b3;
+  --accent: #3d9cf0;
+  --ok: #3ecf8e;
+  --warn: #f0b429;
+  --bad: #f07178;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+  background: #121920;
+}
+header h1 { margin: 0; font-size: 1.15rem; font-weight: 600; }
+nav { display: flex; gap: 8px; flex-wrap: wrap; }
+nav a {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+nav a.ativo, nav a:hover { border-color: var(--accent); color: #fff; }
+main { padding: 22px; max-width: 1200px; margin: 0 auto; }
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+}
+.card .rotulo { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: .04em; }
+.card .valor { font-size: 1.45rem; margin-top: 6px; font-weight: 650; }
+.painel { margin-top: 18px; }
+.acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+button, .btn {
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: #243140;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+button:hover { border-color: var(--accent); }
+button.ok { border-color: #2d6a4f; }
+button.bad { border-color: #7a2e34; }
+.msg {
+  margin-top: 10px;
+  color: var(--muted);
+  min-height: 1.2em;
+  white-space: pre-wrap;
+}
+form.prefs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+form.prefs label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--muted); }
+input, select {
+  background: #121920;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+th { color: var(--muted); font-weight: 600; }
+tr:hover td { background: #1e2833; }
+.vazio { color: var(--muted); padding: 24px; text-align: center; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  background: #243140;
+}
+.badge.on { background: #1b4332; color: var(--ok); }
+.badge.off { background: #3d1f24; color: var(--bad); }
+canvas { width: 100% !important; max-height: 320px; }
+.graficos { display: grid; gap: 16px; }
+.hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 12px; }
+.razao { margin-top: 8px; color: var(--muted); font-size: 0.92rem; }

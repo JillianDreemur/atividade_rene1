@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gráficos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Gráficos</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/listar">Histórico</a>
+      <a class="ativo" href="/graficos">Gráficos</a>
+    </nav>
+  </header>
+  <main class="graficos">
+    <p class="hint">Dados de <code>/historico.json</code> (monitoramento + temperatura/umidade).</p>
+    <section class="card">
+      <div class="rotulo">Temperatura e umidade (monitoramento)</div>
+      <canvas id="cTemp"></canvas>
+    </section>
+    <section class="card">
+      <div class="rotulo">Chuva e luminosidade</div>
+      <canvas id="cAmb"></canvas>
+    </section>
+    <section class="card">
+      <div class="rotulo">Série T/U (ajustes)</div>
+      <canvas id="cTh"></canvas>
+    </section>
+    <p class="msg" id="msg"></p>
+  </main>
+  <script>
+    const cor = { t: "#3d9cf0", u: "#3ecf8e", c: "#f0b429", l: "#c4b5fd" };
+    function labels(lista, campo) {
+      return lista.map((x) => (x[campo] || "").replace("T", " ").slice(11, 19) || x[campo]);
+    }
+    async function carregar() {
+      const msg = document.getElementById("msg");
+      try {
+        const r = await fetch("/historico.json");
+        const d = await r.json();
+        const mon = (d.monitoramento || []).slice().reverse();
+        const th = d.th || [];
+        if (!mon.length && !th.length) {
+          msg.textContent = "Sem dados ainda para desenhar os gráficos.";
+          return;
+        }
+        const eixo = labels(mon, "criado_em");
+        new Chart(document.getElementById("cTemp"), {
+          type: "line",
+          data: {
+            labels: eixo,
+            datasets: [
+              { label: "°C", data: mon.map((x) => x.temperatura), borderColor: cor.t, tension: 0.25 },
+              { label: "% umid.", data: mon.map((x) => x.umidade), borderColor: cor.u, tension: 0.25 },
+            ],
+          },
+          options: { responsive: true, plugins: { legend: { labels: { color: "#e8eef4" } } }, scales: { x: { ticks: { color: "#8ea0b3", maxTicksLimit: 8 } }, y: { ticks: { color: "#8ea0b3" } } } },
+        });
+        new Chart(document.getElementById("cAmb"), {
+          type: "line",
+          data: {
+            labels: eixo,
+            datasets: [
+              { label: "chuva %", data: mon.map((x) => x.chuva), borderColor: cor.c, tension: 0.25 },
+              { label: "luz", data: mon.map((x) => x.luminosidade), borderColor: cor.l, tension: 0.25 },
+            ],
+          },
+          options: { responsive: true, plugins: { legend: { labels: { color: "#e8eef4" } } }, scales: { x: { ticks: { color: "#8ea0b3", maxTicksLimit: 8 } }, y: { ticks: { color: "#8ea0b3" } } } },
+        });
+        new Chart(document.getElementById("cTh"), {
+          type: "line",
+          data: {
+            labels: labels(th, "criado_em"),
+            datasets: [
+              { label: "°C", data: th.map((x) => x.temperatura), borderColor: cor.t, tension: 0.25 },
+              { label: "% umid.", data: th.map((x) => x.umidade), borderColor: cor.u, tension: 0.25 },
+            ],
+          },
+          options: { responsive: true, plugins: { legend: { labels: { color: "#e8eef4" } } }, scales: { x: { ticks: { color: "#8ea0b3", maxTicksLimit: 8 } }, y: { ticks: { color: "#8ea0b3" } } } },
+        });
+      } catch (e) {
+        msg.textContent = "Falha ao ler /historico.json: " + e;
+      }
+    }
+    carregar();
+  </script>
+</body>
+</html>

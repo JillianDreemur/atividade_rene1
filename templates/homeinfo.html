@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quarto inteligente</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Quarto inteligente</h1>
+    <nav>
+      <a class="ativo" href="/">Início</a>
+      <a href="/listar">Histórico</a>
+      <a href="/graficos">Gráficos</a>
+    </nav>
+  </header>
+  <main>
+    <p class="hint" id="linha-meta">
+      Modo do agente: <strong id="v-modo">{{ estado.modo_agente }}</strong>
+      · simulação: <strong id="v-sim">{% if estado.modo_simulacao %}ligada{% else %}desligada (IPs reais){% endif %}</strong>
+      · última ação: <strong id="v-acao">{{ estado.ultima_acao_agente or "nenhuma" }}</strong>
+      · hora: <span id="v-hora">{{ estado.hora_servidor }}</span>
+    </p>
+    <p class="razao" id="v-razao">{{ estado.ultima_razao_agente }}</p>
+
+    <div class="grade">
+      <div class="card"><div class="rotulo">Temperatura</div><div class="valor" id="v-temp">{{ "%.1f"|format(estado.temperatura_atual|float) }}°C</div></div>
+      <div class="card"><div class="rotulo">Umidade</div><div class="valor" id="v-umid">{{ "%.0f"|format(estado.umidade_atual|float) }}%</div></div>
+      <div class="card"><div class="rotulo">Chuva</div><div class="valor" id="v-chuva">{{ "%.0f"|format(estado.chuva_atual|float) }}%</div></div>
+      <div class="card"><div class="rotulo">Luminosidade</div><div class="valor" id="v-luz">{{ "%.0f"|format(estado.luminosidade_atual|float) }}</div></div>
+      <div class="card"><div class="rotulo">Janela</div><div class="valor" id="v-janela">{% if estado.janela_aberta %}aberta{% else %}fechada{% endif %}</div></div>
+      <div class="card"><div class="rotulo">Ar</div><div class="valor" id="v-ar">{% if estado.ar_ligado %}ligado{% else %}desligado{% endif %}</div></div>
+      <div class="card"><div class="rotulo">Luz</div><div class="valor" id="v-luzest">{% if estado.luz_ligada %}ligada{% else %}desligada{% endif %}</div></div>
+      <div class="card"><div class="rotulo">Ventilador</div><div class="valor" id="v-vent">nível {{ estado.ventilador }}</div></div>
+      <div class="card"><div class="rotulo">Umidificador</div><div class="valor" id="v-umidif">nível {{ estado.umidificador }}</div></div>
+      <div class="card"><div class="rotulo">Dormir</div><div class="valor" id="v-dormir">{% if estado.dormir %}sim{% else %}não{% endif %}</div></div>
+      <div class="card"><div class="rotulo">Presença interna</div><div class="valor" id="v-pin">{% if estado.presenca_interna %}sim{% else %}não{% endif %}</div></div>
+      <div class="card"><div class="rotulo">Presença externa</div><div class="valor" id="v-pout">{% if estado.presenca_externa %}sim{% else %}não{% endif %}</div></div>
+    </div>
+
+    <section class="painel card">
+      <div class="rotulo">Comandos manuais</div>
+      <p class="hint">{% if estado.modo_simulacao %}Simulação ligada: temperatura, umidade e chuva mudam sozinhas a cada 5 s e o agente atualiza a última ação.{% else %}Simulação desligada: o servidor tenta as ESPs. Se a janela não estiver no Wi‑Fi, aparece 503 após o timeout.{% endif %}</p>
+      <div class="acoes">
+        <button data-url="/interf/abrir">Abrir janela</button>
+        <button data-url="/interf/fechar">Fechar janela</button>
+        <button data-url="/interf/ligarar">Ligar ar</button>
+        <button data-url="/interf/desligarar">Desligar ar</button>
+        <button data-url="/interf/ligarluz">Ligar luz</button>
+        <button data-url="/interf/desligarluz">Desligar luz</button>
+        <button data-url="/interf/ligarventilador">Ventilador +</button>
+        <button data-url="/interf/desligarventilador">Ventilador off</button>
+        <button data-url="/interf/ligarumidificador">Umidificador +</button>
+        <button data-url="/interf/desligarumidificador">Umidificador off</button>
+        <button data-url="/interf/dormir">Alternar dormir</button>
+        <button class="ok" data-url="/interf/decidir">Decidir agora</button>
+        <button data-url="/interf/simulacao">{% if estado.modo_simulacao %}Usar placas reais{% else %}Ligar simulação{% endif %}</button>
+      </div>
+      <div class="msg" id="msg"></div>
+    </section>
+
+    <section class="painel card">
+      <div class="rotulo">Modo do agente</div>
+      <div class="acoes" style="margin-top:10px">
+        <button data-url="/interf/modo/reativo">Reativo</button>
+        <button data-url="/interf/modo/cognitivo">Cognitivo</button>
+        <button data-url="/interf/modo/adaptativo">Adaptativo</button>
+      </div>
+    </section>
+
+    <section class="painel card">
+      <div class="rotulo">Preferências</div>
+      <form class="prefs" id="prefs">
+        <label>Temperatura alvo
+          <input name="temperatura_alvo" type="number" step="0.1" value="{{ estado.temperatura_alvo }}">
+        </label>
+        <label>Limite de calor
+          <input name="temperatura_limite" type="number" step="0.1" value="{{ estado.temperatura_limite }}">
+        </label>
+        <label>Umidade alvo
+          <input name="umidade_alvo" type="number" step="0.1" value="{{ estado.umidade_alvo }}">
+        </label>
+        <label>Umidade mínima
+          <input name="umidade_minima" type="number" step="0.1" value="{{ estado.umidade_minima }}">
+        </label>
+        <label>Umidade máxima
+          <input name="umidade_maxima" type="number" step="0.1" value="{{ estado.umidade_maxima }}">
+        </label>
+        <label>Limiar de chuva
+          <input name="limiar_chuva" type="number" step="0.1" value="{{ estado.limiar_chuva }}">
+        </label>
+        <label>Abrir de manhã (hora)
+          <input name="hora_abrir_manha" type="number" min="0" max="23" value="{{ estado.hora_abrir_manha }}">
+        </label>
+        <label>Fechar à noite (hora)
+          <input name="hora_fechar_noite" type="number" min="0" max="23" value="{{ estado.hora_fechar_noite }}">
+        </label>
+        <label>Modo
+          <select name="modo_agente">
+            <option value="reativo" {% if estado.modo_agente == "reativo" %}selected{% endif %}>reativo</option>
+            <option value="cognitivo" {% if estado.modo_agente == "cognitivo" %}selected{% endif %}>cognitivo</option>
+            <option value="adaptativo" {% if estado.modo_agente == "adaptativo" %}selected{% endif %}>adaptativo</option>
+          </select>
+        </label>
+        <label>&nbsp;<button type="submit">Salvar</button></label>
+      </form>
+    </section>
+
+    <section class="painel card">
+      <div class="rotulo">Placas registradas</div>
+      <ul>
+        {% for nome, ip in estado.placas.items() %}
+        <li><code>{{ nome }}</code> → {{ ip }}</li>
+        {% else %}
+        <li>Nenhuma placa.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </main>
+  <script>
+    const msg = document.getElementById("msg");
+    async function chamar(url) {
+      msg.textContent = "Enviando…";
+      try {
+        const r = await fetch(url);
+        const t = await r.text();
+        msg.textContent = r.status + " " + t;
+        if (r.ok) setTimeout(() => location.reload(), 700);
+      } catch (e) {
+        msg.textContent = String(e);
+      }
+    }
+    document.querySelectorAll("button[data-url]").forEach((b) => {
+      b.addEventListener("click", () => chamar(b.dataset.url));
+    });
+    document.getElementById("prefs").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const dados = Object.fromEntries(new FormData(ev.target).entries());
+      msg.textContent = "Salvando preferências…";
+      const r = await fetch("/interf/preferencias", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados),
+      });
+      msg.textContent = await r.text();
+      if (r.ok) setTimeout(() => location.reload(), 500);
+    });
+
+    const n = (v) => Number(v) ? 1 : 0;
+    async function atualizarPainel() {
+      try {
+        const e = await fetch("/interf/status_geral").then((r) => r.json());
+        document.getElementById("v-modo").textContent = e.modo_agente;
+        document.getElementById("v-sim").textContent = n(e.modo_simulacao) ? "ligada" : "desligada (IPs reais)";
+        document.getElementById("v-acao").textContent = e.ultima_acao_agente || "nenhuma";
+        document.getElementById("v-hora").textContent = e.hora_servidor;
+        document.getElementById("v-razao").textContent = e.ultima_razao_agente || "";
+        document.getElementById("v-temp").textContent = Number(e.temperatura_atual).toFixed(1) + "°C";
+        document.getElementById("v-umid").textContent = Math.round(e.umidade_atual) + "%";
+        document.getElementById("v-chuva").textContent = Math.round(e.chuva_atual) + "%";
+        document.getElementById("v-luz").textContent = String(Math.round(e.luminosidade_atual));
+        document.getElementById("v-janela").textContent = n(e.janela_aberta) ? "aberta" : "fechada";
+        document.getElementById("v-ar").textContent = n(e.ar_ligado) ? "ligado" : "desligado";
+        document.getElementById("v-luzest").textContent = n(e.luz_ligada) ? "ligada" : "desligada";
+        document.getElementById("v-vent").textContent = "nível " + (e.ventilador || 0);
+        document.getElementById("v-umidif").textContent = "nível " + (e.umidificador || 0);
+        document.getElementById("v-dormir").textContent = n(e.dormir) ? "sim" : "não";
+        document.getElementById("v-pin").textContent = n(e.presenca_interna) ? "sim" : "não";
+        document.getElementById("v-pout").textContent = n(e.presenca_externa) ? "sim" : "não";
+      } catch (_) {}
+    }
+    setInterval(atualizarPainel, 2000);
+    atualizarPainel();
+  </script>
+</body>
+</html>

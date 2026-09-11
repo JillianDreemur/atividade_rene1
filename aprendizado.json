@@ -1,0 +1,60 @@
+{
+  "pesos": {
+    "abrir_janela": -1.0,
+    "fechar_janela": -0.6,
+    "ligar_ar": -1.6,
+    "desligar_ar": 0.0,
+    "ligar_ventilador": 0.0,
+    "desligar_ventilador": 0.0,
+    "ligar_umidificador": 0.0,
+    "desligar_umidificador": 0.0,
+    "ligar_luz": 0.0,
+    "desligar_luz": 0.0,
+    "abrir_janela_manha": -1.0
+  },
+  "hora_abrir_manha": 8,
+  "historico_feedback": [
+    {
+      "acao": "ligar_ar",
+      "valor": 0.4,
+      "comentario": "confirmacao manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:42:47"
+    },
+    {
+      "acao": "ligar_ar",
+      "valor": -1.0,
+      "comentario": "override manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:42:48"
+    },
+    {
+      "acao": "ligar_ar",
+      "valor": -1.0,
+      "comentario": "override manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:43:38"
+    },
+    {
+      "acao": "fechar_janela",
+      "valor": -1.0,
+      "comentario": "override manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:47:23"
+    },
+    {
+      "acao": "abrir_janela",
+      "valor": -1.0,
+      "comentario": "override manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:48:09"
+    },
+    {
+      "acao": "fechar_janela",
+      "valor": 0.4,
+      "comentario": "confirmacao manual",
+      "hora": 17,
+      "quando": "2026-09-11T17:49:08"
+    }
+  ]
+}

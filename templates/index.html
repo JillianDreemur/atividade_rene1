@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Histórico dos sensores</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Histórico dos sensores</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a class="ativo" href="/listar">Histórico</a>
+      <a href="/graficos">Gráficos</a>
+    </nav>
+  </header>
+  <main>
+    <p class="hint">Leituras da tabela <code>monitoramento</code>, mais recentes primeiro.</p>
+    {% if dados_sensor %}
+    <div class="card" style="overflow:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Quando</th>
+            <th>Temp</th>
+            <th>Umidade</th>
+            <th>Luz</th>
+            <th>Chuva</th>
+            <th>Janela</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in dados_sensor %}
+          <tr>
+            <td>{{ d.id }}</td>
+            <td>{{ d.criado_em }}</td>
+            <td>{{ d.temperatura }}</td>
+            <td>{{ d.umidade }}</td>
+            <td>{{ d.luminosidade }}</td>
+            <td>{{ d.chuva }}</td>
+            <td>
+              {% if d.status_janela == "aberta" %}
+              <span class="badge on">aberta</span>
+              {% else %}
+              <span class="badge off">{{ d.status_janela or "fechada" }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="card vazio">Ainda não há leituras. Envie POST em <code>/monitoramento</code> ou use <code>/ajustar</code>.</div>
+    {% endif %}
+  </main>
+</body>
+</html>
